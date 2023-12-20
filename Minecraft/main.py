@@ -118,20 +118,26 @@ while True:
                 print('do nothing')
 
         if keys[pygame.K_s]:
+            print(camera.pos[2])
             existe = False
-            for c in ListDesCubes:
+            """for c in ListDesCubes:
                 if c.pos[1] == 0:  # Vérifier si un cube est à la position y = 0
                     existe = True
                     print("Cube found at ground level")
-                    break  # Sortir de la boucle dès qu'un cube est trouvé au niveau du sol
+
+                    break  # Sortir de la boucle dès qu'un cube est trouvé au niveau du sol"""
+
+            if camera.pos[2] < 0:
+                existe = True
+                print("Cube found at ground level")
+
+                break  # Sortir de la boucle dès qu'un cube est trouvé au niveau du sol
 
             if existe and not (keys[pygame.K_SPACE]):  # Si un cube est au sol et "Espace" n'est pas enfoncé
                 camera.pos[2] += 0  # Aucun déplacement vers le bas
                 existe = False
             else:
                 camera.pos[2] += 2  # Déplacer la caméra vers le bas par défaut
-
-
 
 
         if keys[pygame.K_UP]:
@@ -160,6 +166,8 @@ while True:
             #print('in it')
             if jump_force == 0:
                 jump_force = 7
+                #if keys[pygame.K_s]:
+                camera.pos[2] += abs(camera.pos[2])
 
         if event.type == pygame.MOUSEBUTTONDOWN:
             mouse_x, mouse_y = pygame.mouse.get_pos()
@@ -183,10 +191,6 @@ while True:
                 # Si aucun cube n'existe à cette position, créer un nouveau cube à la position de la souris
                 new_cube = Cube(screen, vertices, faces, mouse_world_pos, 10, image1, image2, camera)
                 ListDesCubes.append(new_cube)
-
-        # Vérification simultanée des touches "Espace" et "S" pour le déplacement de la caméra vers le bas
-        if keys[pygame.K_SPACE] and keys[pygame.K_s]:
-            camera.pos[2] -= 2  # Déplacement vers le bas si les deux touches sont enfoncées
 
     if camera.pos[0] > 100:
         camera.pos[0] = coordX

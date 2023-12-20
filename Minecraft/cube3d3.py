@@ -1,14 +1,19 @@
 import numpy as np
 import pygame
 
-
 class Cube:
 
-    def __init__(self, screen, points, faces, pos, size, side, otherSides, camera):
+    def __init__(self, screen,points,faces, pos, size, texture):
         self.screen = screen
         self.pos = pos
         self.size = size
         self.vertices = points * size + self.pos
+        self.f = 3
+        self.alpha = 50
+        self.beta = 50
+        self.u0 = 500
+        self.v0 = 300
+        self.texture = texture
         self.faces = faces
         self.angleX = 0
         self.angleY = 0
@@ -16,15 +21,9 @@ class Cube:
         self.dx = 0
         self.dy = 0
         self.dz = 0
-        self.camera = camera
-        self.sides = {
-            'front': [(0, 1, 2, 3), side],
-            'back': [(4, 5, 6, 7), side],
-            'left': [(0, 1, 5, 4), side],
-            'right': [(3, 2, 6, 7), side],
-            'top': [(0, 3, 7, 4), otherSides],
-            'bottom': [(1, 2, 6, 5), otherSides]
-        }
+        self.light_dir = np.asarray([0, -1, -1])
+        self.light_dir = self.light_dir/np.linalg.norm(self.light_dir) # pour le rend un vecteur unitaire
+        self.normales = []
 
     def Zrotation(self, angle, camera):
         angle = np.radians(angle)
@@ -53,30 +52,37 @@ class Cube:
         ])
         self.vertices = np.dot((self.vertices - camera), rotation_matrix.T) + camera
 
+    def jump(self):
+        if not self.dy:
+            key = pygame.key.get_pressed()
+            if key[pygame.K_F1]:
+                self.dy = 100
+            else:
+                self.dy = 4
 
     def project_point(self, point, camera):
         pts = point - camera
         x, y, z = pts[0], pts[1], pts[2]
 
         # Calcul des coordonnées 2D (u, v) à partir des coordonnées 3D (coordX, coordY, coordZ)
-        u = self.camera.u0 + self.camera.alpha * (self.camera.f * x / z)
-        v = self.camera.v0 + self.camera.beta * (self.camera.f * y / z)
+        u = self.u0 + self.alpha * (self.f * x / z)
+        v = self.v0 + self.beta * (self.f * y / z)
 
         return np.array([int(u), int(v)])
 
     def projection(self, points, camera):
-        f = self.camera.f
+        f = self.f
         new_points = points - camera
 
-        pX, pY, pZ = np.take(new_points, 0, axis=1), np.take(new_points, 1, axis=1), np.take(new_points, 2, axis=1)
-        pZ[pZ < 1]= 1
+        pX, pY, pZ = np.take(new_points, 0, axis=1) , np.take(new_points, 1, axis=1), np.take(new_points, 2,axis=1)
+
         # Calcul direct des coordonnées projetées sans utiliser column_stack
         projected_points = np.vstack((pX / pZ, pY / pZ, np.ones(len(new_points))))
 
         # Matrice de projection
         projected_matrix = [
-            [0, f * self.camera.beta, self.camera.u0],
-            [f * self.camera.alpha, 0, self.camera.v0],
+            [0, f * self.beta, self.u0],
+            [f * self.alpha, 0, self.v0],
             [0, 0, 1]
         ]
 
@@ -85,45 +91,65 @@ class Cube:
         projected_points = np.transpose(projected_points)
         return projected_points
 
-    def centre(self, side, camera):
-        vertices = self.sides[side][0]
-        sum_distance = sum(np.linalg.norm(np.array(self.vertices[i]) - np.array(camera)) for i in vertices)
-        return sum_distance / len(vertices)
-
     def draw(self, camera):
         rotated_vertices = self.projection(self.vertices, camera)
-        sorted_sides = sorted(self.sides.items(), key=lambda x: self.centre(x[0], camera), reverse=True)
-        for side, (indices, texture) in sorted_sides[3:6]:
-            vertices = [rotated_vertices[i] for i in indices]
+        self.faces.sort(key=lambda x: min(x))
 
-            self.textureMapping(self.screen, vertices, texture)
+        for indices in self.faces:
+            points = [rotated_vertices[i] for i in indices]
+            self.textureMapping(self.screen, points)
+
+    # pour calculet le vecteur scalaire
+    def dot_3d(self, arr1, arr2):
+        return arr1[0] * arr2 + arr1[1] * arr2 + arr1[2] * arr2
 
     def linear_interpolation(self, i, j, facteur):
         return i + facteur * (j - i)
 
-    def textureMapping(self, screen, face, texture):
-        widthTex, heightTex = texture.get_size()
+    def calculer_normales(self):
+        self.normales = []
+
+        for face in self.faces:
+            # Obtention des points pour cette face du cube
+            p1 = self.vertices[face[0]]
+            p2 = self.vertices[face[1]]
+            p3 = self.vertices[face[2]]
+
+            # Calcul des vecteurs pour les côtés de la face
+            v1 = p2 - p1
+            v2 = p3 - p1
+
+            # Calcul du produit vectoriel pour obtenir le vecteur normal de la face
+            normal = np.cross(v1, v2)
+            self.normales.append(normal / np.linalg.norm(normal))  # Normalisation du vecteur normal
+
+    def textureMapping(self, screen, face):
+        widthTex, heightTex = self.texture.get_size()
+        self.calculer_normales()
 
         # Création d'un tableau pour stocker les points projetés
         vertexs = np.zeros((widthTex + 1, heightTex + 1, 2))  # Tableau 3D pour stocker les coordonnées coordX et coordY
 
         for i in range(heightTex + 1):
-            firstInterpolation = np.array(
-                [self.linear_interpolation(face[1][d], face[2][d], i / heightTex) for d in range(2)])
-            secondInterpolation = np.array(
-                [self.linear_interpolation(face[0][d], face[3][d], i / heightTex) for d in range(2)])
+            firstInterpolation = np.array([self.linear_interpolation(face[1][d], face[2][d], i / heightTex) for d in range(2)])
+            secondInterpolation = np.array([self.linear_interpolation(face[0][d], face[3][d], i / heightTex) for d in range(2)])
 
             for k in range(widthTex + 1):
-                p = np.array(
-                    [self.linear_interpolation(firstInterpolation[d], secondInterpolation[d], k / widthTex) for d in
-                     range(2)])
+                p = np.array([self.linear_interpolation(firstInterpolation[d], secondInterpolation[d],k / widthTex) for d in range(2)])
                 vertexs[k, i] = p  # Stockage du resultat dans le tableau
 
         for x in range(widthTex):
             for y in range(heightTex):
                 # Dessin du polygone texturé en utilisant les valeurs du tableau
+                for normal in self.normales:
+                    dot_product = np.dot(normal, self.light_dir)
 
-                pygame.draw.polygon(screen, texture.get_at((x, y)), [
+                    # Définir la couleur en fonction du produit scalaire
+                    brightness = max(0, dot_product)  # S'assurer que la luminosité est au moins égale à zéro
+                    color = tuple(int(c * brightness) for c in
+                                  self.texture.get_at((x, y)))  # Utilisation de la couleur de la texture
+
+                pygame.draw.polygon(screen, self.texture.get_at((x, y)), [
                     vertexs[x, y],
                     vertexs[x, y + 1],
                     vertexs[x + 1, y + 1],
