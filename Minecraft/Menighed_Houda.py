@@ -174,6 +174,9 @@ def dist(cube, camera):
     return sum(np.linalg.norm(np.array(i) - np.array(camera)) for i in cube.vertices) / len(cube.vertices)
 sp = 1
 debut = False
+supr = False
+existeC = False
+existeK = False
 while True:
     sorted_cubes = sorted(ListDesCubes, key=lambda x_: (dist(x_, camera.pos)), reverse=True)
 
@@ -193,13 +196,33 @@ while True:
         keys = pygame.key.get_pressed()
 
         if keys[pygame.K_a]:
-            camera.pos[1] -= 2
+            #camera.pos[1] -= 2
+
+            maxPozZ = (ListDesCubes[0].pos[1])
+            print(maxPozZ)
+            for c in ListDesCubes:
+                if c.pos[1] < maxPozZ:
+                    maxPozZ = c.pos[1]
+
+            if maxPozZ > (camera.pos[2] + 6):
+                print("in true")
+                existeK = True
+
+            else:
+                camera.pos[1] -= 2  # Déplacement vers le bas
+
+                """if camera.pos[2] <= 0:
+                    camera.pos[2] +=0"""
+            if existeK:
+                print('===================')
+                jump_force = 4
+                print("supp")
         if keys[pygame.K_d]:
             camera.pos[1] += 2
         if keys[pygame.K_w]:
             sound_effect.play()
             matching = False
-            supr = False
+
             if debut:
                 camera.pos[2] += 4
                 debut = False
@@ -218,8 +241,20 @@ while True:
                     #camera.pos[2] += 0
                     matching = True
                     break
-                if (c.pos[2]) < (camera.pos[2] + (cubeSize * 2)):
-                    supr = True
+                print('position cube in z')
+                print(c.pos[2])
+                print('position camera in z')
+                print(camera.pos[2])
+            maxPozZ = (ListDesCubes[0].pos[2])
+            print(maxPozZ)
+            for c in ListDesCubes:
+                if c.pos[2] > maxPozZ:
+                    maxPozZ = c.pos[2]
+
+            if maxPozZ <= (camera.pos[2] + 6):
+                print("in true")
+                existeC = True
+
 
             if matching or (camera.pos[2] == 0):
                 camera.pos[2] += 0
@@ -230,11 +265,10 @@ while True:
 
                 """if camera.pos[2] <= 0:
                     camera.pos[2] +=0"""
-            if supr :
-                camera.pos[0] +=4
+            if existeC:
+                print('===================')
+                jump_force = 4
                 print("supp")
-
-
 
         if keys[pygame.K_s]:
             sound_effect.play()
@@ -321,10 +355,31 @@ while True:
 
     if camera.pos[0] > 100:
         camera.pos[0] = coordX
-    jump_force = max(0, jump_force - jump_reduce)
-    #camera.pos[0] = min(0, camera.pos[0] - jump_force + gravity)
-    camera.pos[0] = min(0, camera.pos[0] - jump_force + gravity)
 
+    print(existeC, existeK)
+    jump_force = max(0, jump_force - jump_reduce)
+    if existeC:
+        camera.pos[0] = max(0, camera.pos[0] - jump_force + gravity)
+        #existeC = False
+    else:
+        camera.pos[0] = min(0, camera.pos[0] - jump_force + gravity)
+    #camera.pos[0] = min(0, camera.pos[0] - jump_force + gravity)
+
+    if existeC :
+        (coordX, coordY, coordZ) = (0, 80, 50)
+        camera.pos[2] = 0
+        camera.pos[1] = coordY
+        camera.pos[0] = coordX
+        sp = 1
+        debut = False
+        supr = False
+        existeC = False
+        existeK = False
+        movement_speed = 0.05
+        rotation_speed = 0.5
+        jump_force = 0
+        jump_reduce = 0.1
+        gravity = 1
     for i in range(hauteur):
         proportion = i / hauteur
 
