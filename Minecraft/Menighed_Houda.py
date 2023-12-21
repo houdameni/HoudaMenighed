@@ -52,7 +52,7 @@ alpha = 50
 beta = 50
 u0 = 300
 v0 = 300
-f = 2.75
+f = 2.90
 pos = np.array([coordX, coordY, 0])
 camera = Camera(alpha, beta, u0, v0, f, pos)
 
@@ -166,7 +166,8 @@ def collision_detected(point, vertices_of_face):
 
 def dist(cube, camera):
     return sum(np.linalg.norm(np.array(i) - np.array(camera)) for i in cube.vertices) / len(cube.vertices)
-
+sp = 1
+debut = False
 while True:
     sorted_cubes = sorted(ListDesCubes, key=lambda x_: (dist(x_, camera.pos)), reverse=True)
 
@@ -176,6 +177,7 @@ while True:
     camera_pos_y = camera.pos[1]
     camera_pos_x = camera.pos[0]
     camera_pos_z = camera.pos[2]
+
 
     for event in pygame.event.get():
         if event.type == pygame.QUIT:
@@ -190,7 +192,12 @@ while True:
             camera.pos[1] += 2
         if keys[pygame.K_w]:
             matching = False
+            supr = False
+            if debut:
+                camera.pos[2] += 4
+                debut = False
             for c in ListDesCubes:
+
                 print('position cube in z')
                 print(c.pos[2] - (cubeSize * 2))
                 print('position camera in z')
@@ -204,6 +211,9 @@ while True:
                     #camera.pos[2] += 0
                     matching = True
                     break
+                if (c.pos[2] - (cubeSize * 2)) < (camera.pos[2] + (cubeSize * 2)):
+                    supr = True
+
             if matching or (camera.pos[2] <= 0):
                 camera.pos[2] += 0
                 matching = False
@@ -212,6 +222,9 @@ while True:
 
                 if camera.pos[2] <= 0:
                     camera.pos[2] +=0
+            if supr :
+                print("supp")
+
 
 
         if keys[pygame.K_s]:
@@ -252,15 +265,18 @@ while True:
                 c.Zrotation(3, camera,pos)"""
 
         if keys[pygame.K_SPACE]:
+            if sp == 1 :
+                sp = 0
+                debut = True
             print('in it')
             if jump_force == 0:
                 jump_force = 4
             if camera.pos[2] == 0:
-                camera.pos[2] += 2
-            elif camera.pos[2] < 0:
-                camera.pos[2] += abs(camera.pos[2])
-            else:
                 camera.pos[2] += 4
+            elif camera.pos[2] < 0:
+                camera.pos[2] += abs(camera.pos[2]) +1
+            else:
+                camera.pos[2] += 2
 
 
         """if event.type == pygame.MOUSEBUTTONDOWN:
