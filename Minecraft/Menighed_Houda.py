@@ -276,7 +276,7 @@ while True:
             elif camera.pos[2] < 0:
                 camera.pos[2] += abs(camera.pos[2]) +1
             else:
-                camera.pos[2] += 2
+                camera.pos[2] += 4
 
 
         """if event.type == pygame.MOUSEBUTTONDOWN:
