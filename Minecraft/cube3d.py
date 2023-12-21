@@ -4,12 +4,13 @@ import pygame
 
 class Cube:
 
-    def __init__(self, screen, points, faces, pos, size, side, otherSides, camera):
+    def __init__(self, screen, points, faces, pos, size, side, otherSides, camera, test):
         self.screen = screen
         self.pos = pos
         self.size = size
         self.vertices = points * size + self.pos
         self.faces = faces
+        self.test = test
         self.angleX = 0
         self.angleY = 0
         self.angleZ = 0

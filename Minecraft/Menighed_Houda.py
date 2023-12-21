@@ -10,6 +10,11 @@ hauteur = 600
 largeur = 1000
 
 pygame.init()
+pygame.mixer.init()
+sound_effect = pygame.mixer.Sound('grass1.ogg')
+sound_effect2 = pygame.mixer.Sound('hit1.ogg')
+sound_effect3 = pygame.mixer.Sound('fallsmall1.ogg')
+
 screen = pygame.display.set_mode((1000, 600))
 clock = pygame.time.Clock()
 cubeSize = 10
@@ -42,7 +47,7 @@ faces = [
 image1 = pygame.image.load('grass_side1.png')
 
 image2 = pygame.image.load('grass1.png')
-image3 = pygame.image.load('light_blue_wool.png')
+water = pygame.image.load('light_blue_wool.png')
 image4 = pygame.image.load('img.png')
 image5 = pygame.image.load('leaves_oak.png')
 icon = pygame.image.load('grass s.png')
@@ -56,7 +61,7 @@ f = 2.90
 pos = np.array([coordX, coordY, 0])
 camera = Camera(alpha, beta, u0, v0, f, pos)
 
-cube = Cube(screen, vertices, faces, (coordY, coordX, coordZ), cubeSize, image1,image2, camera)
+cube = Cube(screen, vertices, faces, (coordY, coordX, coordZ), cubeSize, image1,image2, camera, 0)
 
 
 coordX = 0
@@ -71,14 +76,14 @@ ListDesCubes.append(cube)
 #coord = coordX + (cubeSize *2)
 for i in range(10):
 
-    cubbe = Cube(screen, vertices, faces, (coordY, coordX, coordZ), cubeSize, image1,image2, camera)
+    cubbe = Cube(screen, vertices, faces, (coordY, coordX, coordZ), cubeSize, image1,image2, camera, 0)
     coordX+=(cubeSize *2)
 
     ListDesCubes.append(cubbe)
 
 for i in range(10):
 
-    cubbe = Cube(screen, vertices, faces, (coordY, coordX, coordZ), cubeSize, image3,image3, camera)
+    cubbe = Cube(screen, vertices, faces, (coordY, coordX, coordZ), cubeSize, water, water, camera, 1)
     coordX+=(cubeSize *2)
 
     ListDesCubes.append(cubbe)
@@ -86,7 +91,7 @@ for i in range(10):
 (coordX, coordY, coordZ) = (0, 80, 50)
 for i in range(20):
 
-    cube2 = Cube(screen, vertices, faces, (coordY, coordX, (coordZ + (cubeSize * 2))), cubeSize, image1, image2, camera)
+    cube2 = Cube(screen, vertices, faces, (coordY, coordX, (coordZ + (cubeSize * 2))), cubeSize, image1, image2, camera, 0)
     coordX+=(cubeSize *2)
     ListDesCubes.append(cube2)
 
@@ -94,7 +99,7 @@ for i in range(20):
 coordY-=(cubeSize *2)
 for i in range(10):
 
-    cube3 = Cube(screen, vertices, faces, (coordY, coordX, (coordZ + (cubeSize * 2))), cubeSize, image1, image2, camera)
+    cube3 = Cube(screen, vertices, faces, (coordY, coordX, (coordZ + (cubeSize * 2))), cubeSize, image1, image2, camera, 0)
     coordX+=(cubeSize *2)
     ListDesCubes.append(cube3)
 
@@ -103,26 +108,26 @@ coordX+=(cubeSize *2)
 
 for i in range(2):
 
-    cube4 = Cube(screen, vertices, faces, (coordY, coordX, (coordZ + (cubeSize * 2))), cubeSize, image4, image4, camera)
+    cube4 = Cube(screen, vertices, faces, (coordY, coordX, (coordZ + (cubeSize * 2))), cubeSize, image4, image4, camera, 0)
     coordY-=(cubeSize *2)
     ListDesCubes.append(cube4)
 
-cube7 = Cube(screen, vertices, faces, (coordY, coordX, (coordZ + (cubeSize * 2))), cubeSize, image5, image5, camera)
+cube7 = Cube(screen, vertices, faces, (coordY, coordX, (coordZ + (cubeSize * 2))), cubeSize, image5, image5, camera, 0)
 coordX-=(cubeSize *2)
 print(coordY, coordX, coordZ)
-cube5 = Cube(screen, vertices, faces, (coordY, coordX, (coordZ + (cubeSize * 2))), cubeSize, image5, image5, camera)
+cube5 = Cube(screen, vertices, faces, (coordY, coordX, (coordZ + (cubeSize * 2))), cubeSize, image5, image5, camera, 0)
 coordY2= coordY - (cubeSize *2)
-cube10 = Cube(screen, vertices, faces, (coordY2, coordX, (coordZ + (cubeSize * 2))), cubeSize, image5, image5, camera)
-cube11 = Cube(screen, vertices, faces, (coordY2, coordX+(cubeSize *2), (coordZ + (cubeSize * 2))), cubeSize, image5, image5, camera)
-cube13 = Cube(screen, vertices, faces, (coordY2 - (cubeSize *2), coordX+(cubeSize *2), (coordZ + (cubeSize * 2))), cubeSize, image5, image5, camera)
+cube10 = Cube(screen, vertices, faces, (coordY2, coordX, (coordZ + (cubeSize * 2))), cubeSize, image5, image5, camera, 0)
+cube11 = Cube(screen, vertices, faces, (coordY2, coordX+(cubeSize *2), (coordZ + (cubeSize * 2))), cubeSize, image5, image5, camera, 0)
+cube13 = Cube(screen, vertices, faces, (coordY2 - (cubeSize *2), coordX+(cubeSize *2), (coordZ + (cubeSize * 2))), cubeSize, image5, image5, camera, 0)
 
-cube12 = Cube(screen, vertices, faces, (coordY2, coordX+(cubeSize *4), (coordZ + (cubeSize * 2))), cubeSize, image5, image5, camera)
+cube12 = Cube(screen, vertices, faces, (coordY2, coordX+(cubeSize *4), (coordZ + (cubeSize * 2))), cubeSize, image5, image5, camera, 0)
 coordX-=(cubeSize *2)
-cube9 = Cube(screen, vertices, faces, (coordY, coordX, (coordZ + (cubeSize * 2))), cubeSize, image5, image5, camera)
+cube9 = Cube(screen, vertices, faces, (coordY, coordX, (coordZ + (cubeSize * 2))), cubeSize, image5, image5, camera, 0)
 coordX+=(cubeSize *6)
-cube6 = Cube(screen, vertices, faces, (coordY, coordX, (coordZ + (cubeSize * 2))), cubeSize, image5, image5, camera)
+cube6 = Cube(screen, vertices, faces, (coordY, coordX, (coordZ + (cubeSize * 2))), cubeSize, image5, image5, camera, 0)
 coordX+=(cubeSize *2)
-cube8 = Cube(screen, vertices, faces, (coordY, coordX, (coordZ + (cubeSize * 2))), cubeSize, image5, image5, camera)
+cube8 = Cube(screen, vertices, faces, (coordY, coordX, (coordZ + (cubeSize * 2))), cubeSize, image5, image5, camera, 0)
 
 ListDesCubes.append(cube5)
 ListDesCubes.append(cube6)
@@ -191,6 +196,7 @@ while True:
         if keys[pygame.K_d]:
             camera.pos[1] += 2
         if keys[pygame.K_w]:
+            sound_effect.play()
             matching = False
             supr = False
             if debut:
@@ -214,20 +220,22 @@ while True:
                 if (c.pos[2] - (cubeSize * 2)) < (camera.pos[2] + (cubeSize * 2)):
                     supr = True
 
-            if matching or (camera.pos[2] <= 0):
+            if matching or (camera.pos[2] == 0):
                 camera.pos[2] += 0
                 matching = False
+                sound_effect2.play()
             else:
                 camera.pos[2] += 2  # Déplacement vers le bas
 
-                if camera.pos[2] <= 0:
-                    camera.pos[2] +=0
+                """if camera.pos[2] <= 0:
+                    camera.pos[2] +=0"""
             if supr :
                 print("supp")
 
 
 
         if keys[pygame.K_s]:
+            sound_effect.play()
             camera.pos[2] -= 2
             print(camera.pos[2])
         """if keys[pygame.K_UP]:
@@ -277,6 +285,7 @@ while True:
                 camera.pos[2] += abs(camera.pos[2]) +1
             else:
                 camera.pos[2] += 4
+            sound_effect2.play()
 
 
         """if event.type == pygame.MOUSEBUTTONDOWN:
