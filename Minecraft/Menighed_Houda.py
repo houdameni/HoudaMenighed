@@ -366,6 +366,7 @@ while True:
     #camera.pos[0] = min(0, camera.pos[0] - jump_force + gravity)
 
     if existeC :
+        sound_effect3.play()
         (coordX, coordY, coordZ) = (0, 80, 50)
         camera.pos[2] = 0
         camera.pos[1] = coordY
