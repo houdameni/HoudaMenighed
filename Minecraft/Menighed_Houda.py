@@ -142,8 +142,8 @@ ListDesCubes.append(cube13)
 
 movement_speed = 0.05
 rotation_speed = 0.5
-jump_force = 0
-jump_reduce = 0.1
+jumpForce = 0
+jumpRd = 0.1
 gravity = 1
 #ListDesCubes.append(cube2)
 
@@ -215,7 +215,7 @@ while True:
                     camera.pos[2] +=0"""
             if existeK:
                 print('===================')
-                jump_force = 4
+                jumpForce = 4
                 print("supp")
         if keys[pygame.K_d]:
             camera.pos[1] += 2
@@ -267,7 +267,7 @@ while True:
                     camera.pos[2] +=0"""
             if existeC:
                 print('===================')
-                jump_force = 4
+                jumpForce = 4
                 print("supp")
 
         if keys[pygame.K_s]:
@@ -313,8 +313,8 @@ while True:
                 sp = 0
                 debut = True
             print('in it')
-            if jump_force == 0:
-                jump_force = 4
+            if jumpForce == 0:
+                jumpForce = 4
             if camera.pos[2] == 0:
                 camera.pos[2] += 4
             elif camera.pos[2] < 0:
@@ -357,13 +357,13 @@ while True:
         camera.pos[0] = coordX
 
     print(existeC, existeK)
-    jump_force = max(0, jump_force - jump_reduce)
+    jumpForce = max(0, jumpForce - jumpRd)
     if existeC:
-        camera.pos[0] = max(0, camera.pos[0] - jump_force + gravity)
+        camera.pos[0] = max(0, camera.pos[0] - jumpForce + gravity)
         #existeC = False
     else:
-        camera.pos[0] = min(0, camera.pos[0] - jump_force + gravity)
-    #camera.pos[0] = min(0, camera.pos[0] - jump_force + gravity)
+        camera.pos[0] = min(0, camera.pos[0] - jumpForce + gravity)
+    #camera.pos[0] = min(0, camera.pos[0] - jumpForce + gravity)
 
     if existeC :
         sound_effect3.play()
@@ -378,8 +378,8 @@ while True:
         existeK = False
         movement_speed = 0.05
         rotation_speed = 0.5
-        jump_force = 0
-        jump_reduce = 0.1
+        jumpForce = 0
+        jumpRd = 0.1
         gravity = 1
     for i in range(hauteur):
         proportion = i / hauteur
