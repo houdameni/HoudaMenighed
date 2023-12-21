@@ -205,7 +205,7 @@ while True:
                 if (c.pos[2] - (cubeSize * 2)) == (camera.pos[2] + (cubeSize * 2)):
                     print("-----------matching-------------")
                     print('position cube in z')
-                    print(c.pos[2] - (cubeSize * 2))
+                    print(c.pos[2] + (cubeSize * 2))
                     print('position camera in z')
                     print(camera.pos[2] + (cubeSize * 2))
                     #camera.pos[2] += 0

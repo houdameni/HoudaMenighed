@@ -52,15 +52,15 @@ class Camera:
     def screenToWorldCoordinates(self, screen_coords):
         u, v = screen_coords  # Coordonnées de l'écran (position de la souris)
 
-        # Calcul des coordonnées mondiales à partir des coordonnées de l'écran (projection perspective)
+        # (projection perspective)
         x = (u - self.u0) * self.f / (self.f + (v - self.v0) * np.tan(self.alpha))
         y = (v - self.v0) * self.f / (self.f + (v - self.v0) * np.tan(self.beta))
-        z = self.f  # Ou tout autre valeur que vous souhaitez attribuer pour la coordonnée z
+        z = self.f
 
         # Ajout des coordonnées de la caméra pour obtenir les coordonnées mondiales finales
-        world_x = self.pos[0] + x
-        world_y = self.pos[1] + y
-        world_z = self.pos[2] - z  # Négatif pour simuler une profondeur dans l'espace 3D
+        world_x = abs(self.pos[0] + x)
+        world_y = abs(self.pos[1] + y)
+        world_z = abs(self.pos[2] - z)
         print(world_x, world_y, world_z)
         return np.array([world_x, world_y, world_z])
 
