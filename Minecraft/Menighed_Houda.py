@@ -14,6 +14,7 @@ pygame.mixer.init()
 sound_effect = pygame.mixer.Sound('grass1.ogg')
 sound_effect2 = pygame.mixer.Sound('hit1.ogg')
 sound_effect3 = pygame.mixer.Sound('fallsmall1.ogg')
+sound_effect4 = pygame.mixer.Sound('wood3.ogg')
 
 screen = pygame.display.set_mode((1000, 600))
 clock = pygame.time.Clock()
@@ -205,19 +206,19 @@ while True:
             for c in ListDesCubes:
 
                 print('position cube in z')
-                print(c.pos[2] - (cubeSize * 2))
+                print(c.pos[2])
                 print('position camera in z')
-                print(camera.pos[2] + (cubeSize * 2))
+                print(camera.pos[2])
                 if (c.pos[2] - (cubeSize * 2)) == (camera.pos[2] + (cubeSize * 2)):
-                    print("-----------matching-------------")
+                    """print("-----------matching-------------")
                     print('position cube in z')
-                    print(c.pos[2] + (cubeSize * 2))
+                    print(c.pos[2])
                     print('position camera in z')
-                    print(camera.pos[2] + (cubeSize * 2))
+                    print(camera.pos[2] + (cubeSize * 2))"""
                     #camera.pos[2] += 0
                     matching = True
                     break
-                if (c.pos[2] - (cubeSize * 2)) < (camera.pos[2] + (cubeSize * 2)):
+                if (c.pos[2]) < (camera.pos[2] + (cubeSize * 2)):
                     supr = True
 
             if matching or (camera.pos[2] == 0):
@@ -230,6 +231,7 @@ while True:
                 """if camera.pos[2] <= 0:
                     camera.pos[2] +=0"""
             if supr :
+                camera.pos[0] +=4
                 print("supp")
 
 
@@ -261,12 +263,12 @@ while True:
 
         if keys[pygame.K_q]:
             camera.pos[0] += 2
-        if keys[pygame.K_a]:
+        """if keys[pygame.K_a]:
             for c in ListDesCubes:
                 c.Zrotation(-3, camera.pos)
         if keys[pygame.K_e]:
             for c in ListDesCubes:
-                c.Zrotation(3, camera.pos)
+                c.Zrotation(3, camera.pos)"""
 
         """if keys[pygame.K_e]:
             for c in ListDesCubes:
@@ -285,7 +287,7 @@ while True:
                 camera.pos[2] += abs(camera.pos[2]) +1
             else:
                 camera.pos[2] += 4
-            sound_effect2.play()
+            sound_effect4.play()
 
 
         """if event.type == pygame.MOUSEBUTTONDOWN:
@@ -310,18 +312,17 @@ while True:
                 # Si un cube existe à cette position, créer un nouveau cube au-dessus de celui-ci
                 new_cube_pos = existing_cube.pos + np.array(
                     [0, 0, cubeSize])  # Ajuster la hauteur du nouveau cube
-                new_cube = Cube(screen, vertices, faces, new_cube_pos, 2, image1, image2, camera)
+                new_cube = Cube(screen, vertices, faces, new_cube_pos, 2, image1, image2, camera, 0)
                 ListDesCubes.append(new_cube)
             else:
                 # Si aucun cube n'existe à cette position, créer un nouveau cube à la position de la souris
-                new_cube = Cube(screen, vertices, faces, mouse_world_pos, 2, image1, image2, camera)
+                new_cube = Cube(screen, vertices, faces, mouse_world_pos, 2, image1, image2, camera, 0)
                 ListDesCubes.append(new_cube)
 
     if camera.pos[0] > 100:
         camera.pos[0] = coordX
     jump_force = max(0, jump_force - jump_reduce)
     #camera.pos[0] = min(0, camera.pos[0] - jump_force + gravity)
-    #l'inverse du saut
     camera.pos[0] = min(0, camera.pos[0] - jump_force + gravity)
 
     for i in range(hauteur):
