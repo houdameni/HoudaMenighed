@@ -4,9 +4,6 @@ from camera import Camera
 from cube3d import Cube
 
 
-def draw_ground():
-    ground_color = (100, 100, 100)  # Couleur du sol
-    pygame.draw.polygon(screen, ground_color, [(0, hauteur), (largeur, hauteur), (largeur, 0), (0, 0)])
 
 couleurBlue = (135, 206, 235)
 couleurBlanc = (255, 255, 255)
@@ -84,6 +81,7 @@ while True:
     camera_pos_y = camera.pos[1]
     camera_pos_x = camera.pos[0]
     camera_pos_z = camera.pos[2]
+    fall = False
     for event in pygame.event.get():
         if event.type == pygame.QUIT:
             pygame.quit()
@@ -130,12 +128,18 @@ while True:
             if camera.pos[2] < 0:
                 existe = True
                 print("Cube found at ground level")
+                jump_force = -4
 
                 break  # Sortir de la boucle dès qu'un cube est trouvé au niveau du sol
 
             if existe and not (keys[pygame.K_SPACE]):  # Si un cube est au sol et "Espace" n'est pas enfoncé
                 camera.pos[2] += 0  # Aucun déplacement vers le bas
                 existe = False
+                if jump_force == 0:
+                    jump_force = 5
+
+                jump_force = max(0, jump_force - jump_reduce)
+                camera.pos[0] = max(0, camera.pos[0] - jump_force + gravity)
             else:
                 camera.pos[2] += 2  # Déplacer la caméra vers le bas par défaut
 
@@ -165,7 +169,7 @@ while True:
         if keys[pygame.K_SPACE]:
             #print('in it')
             if jump_force == 0:
-                jump_force = 7
+                jump_force = 5
                 #if keys[pygame.K_s]:
                 camera.pos[2] += abs(camera.pos[2])
 
@@ -184,21 +188,30 @@ while True:
             if existing_cube:
                 # Si un cube existe à cette position, créer un nouveau cube au-dessus de celui-ci
                 new_cube_pos = existing_cube.pos + np.array(
-                    [0, 0, cubeSize + 1])  # Ajuster la hauteur du nouveau cube
-                new_cube = Cube(screen, vertices, faces, new_cube_pos, 10, image1, image2, camera)
+                    [0, cubeSize,0])  # Ajuster la hauteur du nouveau cube
+                new_cube = Cube(screen, vertices, faces, new_cube_pos, 3, image1, image2, camera)
                 ListDesCubes.append(new_cube)
             else:
                 # Si aucun cube n'existe à cette position, créer un nouveau cube à la position de la souris
-                new_cube = Cube(screen, vertices, faces, mouse_world_pos, 10, image1, image2, camera)
+                new_cube = Cube(screen, vertices, faces, mouse_world_pos, 3, image1, image2, camera)
                 ListDesCubes.append(new_cube)
 
     if camera.pos[0] > 100:
         camera.pos[0] = coordX
-    jump_force = max(0, jump_force - jump_reduce)
+
     #camera.pos[0] = min(0, camera.pos[0] - jump_force + gravity)
     #l'inverse du saut
-    camera.pos[0] = min(0, camera.pos[0] - jump_force + gravity)
+
     #print(camera.pos[0])
+
+    """if fall:
+
+        jump_force = max(0, jump_force - jump_reduce)
+        camera.pos[0] = max(0, camera.pos[0] - jump_force + gravity)
+        fall =False
+    else:"""
+    jump_force = max(0, jump_force - jump_reduce)
+    camera.pos[0] = min(0, camera.pos[0] - jump_force + gravity)
 
     for i in range(hauteur):
         proportion = i / hauteur
@@ -210,7 +223,6 @@ while True:
         )
 
         pygame.draw.line(screen, couleurIntermediaire, (0, i), (largeur, i))
-    draw_ground()
     for c in ListDesCubes:
         c.draw(camera.pos)
     pygame.display.set_caption('Minecraft')

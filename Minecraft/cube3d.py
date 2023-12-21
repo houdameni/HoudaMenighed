@@ -18,12 +18,12 @@ class Cube:
         self.dz = 0
         self.camera = camera
         self.sides = {
-            'front': [(0, 1, 2, 3), side],
-            'back': [(4, 5, 6, 7), side],
-            'left': [(0, 1, 5, 4), side],
-            'right': [(3, 2, 6, 7), side],
-            'top': [(0, 3, 7, 4), otherSides],
-            'bottom': [(1, 2, 6, 5), otherSides]
+            'f': [(0, 1, 2, 3), side],
+            'bl': [(4, 5, 6, 7), side],
+            'l': [(0, 1, 5, 4), side],
+            'r': [(3, 2, 6, 7), side],
+            't': [(0, 3, 7, 4), otherSides],
+            'b': [(1, 2, 6, 5), otherSides]
         }
 
     def Zrotation(self, angle, camera):
@@ -67,10 +67,13 @@ class Cube:
     def projection(self, points, camera):
         f = self.camera.f
         new_points = points - camera
+        pX = np.take(new_points, 0, axis=1)
+        pY = np.take(new_points, 1, axis=1)
+        pZZ = np.take(new_points, 2, axis=1)
 
-        pX, pY, pZ = np.take(new_points, 0, axis=1), np.take(new_points, 1, axis=1), np.take(new_points, 2, axis=1)
-        pZ[pZ < 1]= 1
-        # Calcul direct des coordonnées projetées sans utiliser column_stack
+        pZ = np.take(new_points, 2, axis=1)
+
+        pZ[pZ < 1] = 1
         projected_points = np.vstack((pX / pZ, pY / pZ, np.ones(len(new_points))))
 
         # Matrice de projection

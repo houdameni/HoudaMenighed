@@ -4,9 +4,6 @@ from camera import Camera
 from cube3d import Cube
 
 
-def calc_center(cube, camera):
-    return sum(np.linalg.norm(np.array(i) - np.array(camera)) for i in cube.vertices) / len(cube.vertices)
-
 couleurBlue = (135, 206, 235)
 couleurBlanc = (255, 255, 255)
 hauteur = 600
@@ -53,9 +50,9 @@ icon = pygame.image.load('grass s.png')
 #camera = np.array([coordX, coordY, 0])
 alpha = 50
 beta = 50
-u0 = 500
+u0 = 300
 v0 = 300
-f = 3
+f = 2.75
 pos = np.array([coordX, coordY, 0])
 camera = Camera(alpha, beta, u0, v0, f, pos)
 
@@ -167,8 +164,11 @@ def collision_detected(point, vertices_of_face):
 
     return inside
 
+def dist(cube, camera):
+    return sum(np.linalg.norm(np.array(i) - np.array(camera)) for i in cube.vertices) / len(cube.vertices)
+
 while True:
-    sorted_cubes = sorted(ListDesCubes, key=lambda x_: (calc_center(x_, camera.pos)), reverse=True)
+    sorted_cubes = sorted(ListDesCubes, key=lambda x_: (dist(x_, camera.pos)), reverse=True)
 
     # Récupérer la position Z du cube le plus bas
     lowest_cube_z = min(c.pos[2] for c in ListDesCubes)
@@ -189,28 +189,30 @@ while True:
         if keys[pygame.K_d]:
             camera.pos[1] += 2
         if keys[pygame.K_w]:
-            #camera.pos[2] += 1
-            # Vérification de la présence de cubes au-dessus de la position de la caméra
-            cube_above_camera = False
+            matching = False
             for c in ListDesCubes:
-                if (
-                        camera_pos_x >= c.pos[0] - cubeSize / 2
-                        and camera_pos_x <= c.pos[0] + cubeSize / 2
-                        and camera_pos_y >= c.pos[1] - cubeSize / 2
-                        and camera_pos_y <= c.pos[1] + cubeSize / 2
-                        and camera_pos_z <= c.pos[2] + cubeSize / 2 + 1  # Vérification du cube au-dessus
-                ):
-                    camera.pos[2] = c.pos[2] + cubeSize / 2 + 1
-                    cube_above_camera = True
+                print('position cube in z')
+                print(c.pos[2] - (cubeSize * 2))
+                print('position camera in z')
+                print(camera.pos[2] + (cubeSize * 2))
+                if (c.pos[2] - (cubeSize * 2)) == (camera.pos[2] + (cubeSize * 2)):
+                    print("-----------matching-------------")
+                    print('position cube in z')
+                    print(c.pos[2] - (cubeSize * 2))
+                    print('position camera in z')
+                    print(camera.pos[2] + (cubeSize * 2))
+                    #camera.pos[2] += 0
+                    matching = True
                     break
-
-            print(camera.pos[2])
-
-            # Déplacement de la caméra si aucun cube n'est au-dessus
-            if not cube_above_camera:
-                camera.pos[2] += 2  # Déplacement vers le bas
+            if matching or (camera.pos[2] <= 0):
+                camera.pos[2] += 0
+                matching = False
             else:
-                print('do nothing')
+                camera.pos[2] += 2  # Déplacement vers le bas
+
+                if camera.pos[2] <= 0:
+                    camera.pos[2] +=0
+
 
         if keys[pygame.K_s]:
             camera.pos[2] -= 2
@@ -253,6 +255,13 @@ while True:
             print('in it')
             if jump_force == 0:
                 jump_force = 4
+            if camera.pos[2] == 0:
+                camera.pos[2] += 2
+            elif camera.pos[2] < 0:
+                camera.pos[2] += abs(camera.pos[2])
+            else:
+                camera.pos[2] += 4
+
 
         """if event.type == pygame.MOUSEBUTTONDOWN:
             position_x, posY = pygame.mouse.get_pos()
