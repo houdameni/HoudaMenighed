@@ -196,27 +196,27 @@ while True:
         keys = pygame.key.get_pressed()
 
         if keys[pygame.K_a]:
-            #camera.pos[1] -= 2
+            camera.pos[1] -= 2
 
-            maxPozZ = (ListDesCubes[0].pos[1])
-            print(maxPozZ)
+            """maxPozZ = (ListDesCubes[0].pos[1])
+            #print(maxPozZ)
             for c in ListDesCubes:
                 if c.pos[1] < maxPozZ:
                     maxPozZ = c.pos[1]
 
             if maxPozZ > (camera.pos[2] + 6):
-                print("in true")
+                #print("in true")
                 existeK = True
 
             else:
-                camera.pos[1] -= 2  # Déplacement vers le bas
+                camera.pos[1] -= 2  # Déplacement vers le bas"""
 
-                """if camera.pos[2] <= 0:
-                    camera.pos[2] +=0"""
+            """if camera.pos[2] <= 0:
+                camera.pos[2] +=0"""
             if existeK:
-                print('===================')
+                #print('===================')
                 jumpForce = 4
-                print("supp")
+                #print("supp")
         if keys[pygame.K_d]:
             camera.pos[1] += 2
         if keys[pygame.K_w]:
@@ -228,10 +228,10 @@ while True:
                 debut = False
             for c in ListDesCubes:
 
-                print('position cube in z')
+                """print('position cube in z')
                 print(c.pos[2])
                 print('position camera in z')
-                print(camera.pos[2])
+                print(camera.pos[2])"""
                 if (c.pos[2] - (cubeSize * 2)) == (camera.pos[2] + (cubeSize * 2)):
                     """print("-----------matching-------------")
                     print('position cube in z')
@@ -241,18 +241,18 @@ while True:
                     #camera.pos[2] += 0
                     matching = True
                     break
-                print('position cube in z')
+                """print('position cube in z')
                 print(c.pos[2])
                 print('position camera in z')
-                print(camera.pos[2])
+                print(camera.pos[2])"""
             maxPozZ = (ListDesCubes[0].pos[2])
-            print(maxPozZ)
+            #print(maxPozZ)
             for c in ListDesCubes:
                 if c.pos[2] > maxPozZ:
                     maxPozZ = c.pos[2]
 
             if maxPozZ <= (camera.pos[2] + 6):
-                print("in true")
+                #print("in true")
                 existeC = True
 
 
@@ -266,14 +266,14 @@ while True:
                 """if camera.pos[2] <= 0:
                     camera.pos[2] +=0"""
             if existeC:
-                print('===================')
+                #print('===================')
                 jumpForce = 4
-                print("supp")
+                #print("supp")
 
         if keys[pygame.K_s]:
             sound_effect.play()
             camera.pos[2] -= 2
-            print(camera.pos[2])
+            #print(camera.pos[2])
         """if keys[pygame.K_UP]:
             camera.pos[2]
             click = True"""
@@ -356,7 +356,7 @@ while True:
     if camera.pos[0] > 100:
         camera.pos[0] = coordX
 
-    print(existeC, existeK)
+    #print(existeC, existeK)
     jumpForce = max(0, jumpForce - jumpRd)
     if existeC:
         camera.pos[0] = max(0, camera.pos[0] - jumpForce + gravity)
