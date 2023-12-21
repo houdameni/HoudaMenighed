@@ -4,6 +4,8 @@
 
 This game is a recreation of Minecraft in Python 3 made with PyGame.
 
+
+<h1>Etudiante : Menighed Houda</h1>
 ## Table of Contents
 * [Installing](#installing)
 * [Controls](#controls)
