@@ -312,7 +312,6 @@ while True:
             if sp == 1 :
                 sp = 0
                 debut = True
-            print('in it')
             if jumpForce == 0:
                 jumpForce = 4
             if camera.pos[2] == 0:
